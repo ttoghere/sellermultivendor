@@ -59,6 +59,7 @@ class _SignUpState extends State<SignUp> {
             locationControl.text.isNotEmpty &&
             nameControl.text.isNotEmpty) {
           //Upload img
+          
         } else {
           showDialog(
             context: context,
