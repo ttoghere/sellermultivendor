@@ -79,7 +79,7 @@ class _AuthScreenState extends State<AuthScreen> {
           decoration: BoxDecoration(
             gradient: appGradient(),
           ),
-          child: TabBarView(children: [
+          child:const TabBarView(children: [
             Login(),
             SignUp(),
           ]),

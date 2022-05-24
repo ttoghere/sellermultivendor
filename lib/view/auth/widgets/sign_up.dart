@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:sellermultivendor/view/auth/widgets/custom_text_field.dart';
+import 'package:sellermultivendor/view/shared/custom_text_field.dart';
+import 'package:sellermultivendor/view/shared/error_dialog.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({Key? key}) : super(key: key);
@@ -40,6 +41,41 @@ class _SignUpState extends State<SignUp> {
     String completeAddress =
         "${pMark.subThoroughfare} ${pMark.thoroughfare}, ${pMark.subLocality} ${pMark.locality}, ${pMark.subAdministrativeArea} ${pMark.administrativeArea}, ${pMark.postalCode} ${pMark.country}";
     locationControl.text = completeAddress;
+  }
+
+  Future<void> formValidation() async {
+    if (imageXFile == null) {
+      showDialog(
+        context: context,
+        builder: (context) => const ErrorDialog(
+          message: "Please select an image",
+        ),
+      );
+    } else {
+      if (passwordControl.text == cPasswordControl.text) {
+        if (cPasswordControl.text.isNotEmpty &&
+            emailControl.text.isNotEmpty &&
+            phoneControl.text.isNotEmpty &&
+            locationControl.text.isNotEmpty &&
+            nameControl.text.isNotEmpty) {
+          //Upload img
+        } else {
+          showDialog(
+            context: context,
+            builder: (context) => const ErrorDialog(
+              message: "Please fill the required fields...",
+            ),
+          );
+        }
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => const ErrorDialog(
+            message: "Passwords do not match",
+          ),
+        );
+      }
+    }
   }
 
   Position? position;
@@ -122,11 +158,11 @@ class _SignUpState extends State<SignUp> {
                     hintText: "Location",
                     isObsecure: false,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Container(
-                    margin: EdgeInsets.symmetric(horizontal: 10),
+                    margin: const EdgeInsets.symmetric(horizontal: 10),
                     width: MediaQuery.of(context).size.width,
                     child: ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
@@ -136,8 +172,8 @@ class _SignUpState extends State<SignUp> {
                       onPressed: () {
                         getCurrentLocation();
                       },
-                      label: Text("Get My Location"),
-                      icon: Icon(Icons.gps_fixed),
+                      label: const Text("Get My Location"),
+                      icon: const Icon(Icons.gps_fixed),
                     ),
                   ),
                 ],
@@ -147,7 +183,9 @@ class _SignUpState extends State<SignUp> {
               height: 20,
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                formValidation();
+              },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 80,

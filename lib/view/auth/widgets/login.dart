@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'custom_text_field.dart';
+import '../../shared/custom_text_field.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -22,7 +22,7 @@ class _LoginState extends State<Login> {
           Container(
             alignment: Alignment.bottomCenter,
             child: Padding(
-              padding: EdgeInsets.all(15),
+              padding:const EdgeInsets.all(15),
               child: Image.asset(
                 "images/seller.png",
                 height: 270,
