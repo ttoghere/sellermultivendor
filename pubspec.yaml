@@ -34,6 +34,8 @@ dependencies:
   firebase_storage: ^10.2.16
   flutter:
     sdk: flutter
+  geocoding: ^2.0.4
+  geolocator: ^8.2.1
   image_picker: ^0.8.5+3
   provider: ^6.0.3
 

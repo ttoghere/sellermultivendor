@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sellermultivendor/view/auth/widgets/custom_text_field.dart';
 
@@ -25,6 +27,23 @@ class _SignUpState extends State<SignUp> {
     });
   }
 
+  getCurrentLocation() async {
+    Position newPosition = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.best,
+    );
+    position = newPosition;
+    placeMark = await placemarkFromCoordinates(
+      position!.latitude,
+      position!.longitude,
+    );
+    Placemark pMark = placeMark![0];
+    String completeAddress =
+        "${pMark.subThoroughfare} ${pMark.thoroughfare}, ${pMark.subLocality} ${pMark.locality}, ${pMark.subAdministrativeArea} ${pMark.administrativeArea}, ${pMark.postalCode} ${pMark.country}";
+    locationControl.text = completeAddress;
+  }
+
+  Position? position;
+  List<Placemark>? placeMark;
   XFile? imageXFile;
   final ImagePicker _imagePicker = ImagePicker();
 
@@ -114,7 +133,9 @@ class _SignUpState extends State<SignUp> {
                           primary: Colors.orange[900],
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30))),
-                      onPressed: () {},
+                      onPressed: () {
+                        getCurrentLocation();
+                      },
                       label: Text("Get My Location"),
                       icon: Icon(Icons.gps_fixed),
                     ),
