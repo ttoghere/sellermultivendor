@@ -10,6 +10,7 @@ import 'package:sellermultivendor/view/homeScreen/home_screen.dart';
 import 'package:sellermultivendor/view/shared/custom_text_field.dart';
 import 'package:sellermultivendor/view/shared/error_dialog.dart';
 import 'package:sellermultivendor/view/shared/loading_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({Key? key}) : super(key: key);
@@ -114,12 +115,21 @@ class _SignUpState extends State<SignUp> {
     )
         .then((auth) {
       currentUser = auth.user;
+    }).catchError((error) {
+      Navigator.of(context).pop();
+      showDialog(
+        context: context,
+        builder: (context) => ErrorDialog(
+          message: "An error occured: $error",
+        ),
+      );
     });
     if (currentUser != null) {
       saveDataToFirestore(currentUser!).then((value) {
         Navigator.of(context).pop();
         //Send user to homepage
-        Route newRoute = MaterialPageRoute(builder: (context) => HomeScreen());
+        Route newRoute =
+            MaterialPageRoute(builder: (context) => const HomeScreen());
         Navigator.of(context).pushReplacement(newRoute);
       });
     }
@@ -139,6 +149,12 @@ class _SignUpState extends State<SignUp> {
       "lng": position!.longitude,
     });
     //Save Data Locally
+    SharedPreferences? sharedPreferences =
+        await SharedPreferences.getInstance();
+    await sharedPreferences.setString("uid", currentUser.uid);
+    await sharedPreferences.setString("email", currentUser.email.toString());
+    await sharedPreferences.setString("name", nameControl.text.trim());
+    await sharedPreferences.setString("photoUrl", sellerImageUrl);
   }
 
   Position? position;
