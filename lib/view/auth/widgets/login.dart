@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sellermultivendor/global/global.dart';
+import 'package:sellermultivendor/view/auth/auth_screen.dart';
 import 'package:sellermultivendor/view/homeScreen/home_screen.dart';
 import 'package:sellermultivendor/view/shared/error_dialog.dart';
 import 'package:sellermultivendor/view/shared/loading_dialog.dart';
@@ -58,14 +59,7 @@ class _LoginState extends State<Login> {
       );
     });
     if (currentUser != null) {
-      readDataAndSetDataLocally(currentUser!).then((value) {
-        Navigator.of(context).pop();
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => const HomeScreen(),
-          ),
-        );
-      });
+      readDataAndSetDataLocally(currentUser!);
     }
   }
 
@@ -75,11 +69,34 @@ class _LoginState extends State<Login> {
         .doc(currentUser.uid)
         .get()
         .then((snapshot) async {
-      var access = snapshot.data()!;
-      await sharedPreferences!.setString("uid", currentUser.uid);
-      await sharedPreferences!.setString("email", access["sellerEmail"]);
-      await sharedPreferences!.setString("name", access["sellerName"]);
-      await sharedPreferences!.setString("photoUrl", access["sellerAvatarUrl"]);
+      if (snapshot.exists) {
+        var access = snapshot.data()!;
+        await sharedPreferences!.setString("uid", currentUser.uid);
+        await sharedPreferences!.setString("email", access["sellerEmail"]);
+        await sharedPreferences!.setString("name", access["sellerName"]);
+        await sharedPreferences!
+            .setString("photoUrl", access["sellerAvatarUrl"]);
+        Navigator.of(context).pop();
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const HomeScreen(),
+          ),
+        );
+      } else {
+        firebaseAuth.signOut();
+        Navigator.of(context).pop();
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const AuthScreen(),
+          ),
+        );
+        showDialog(
+          context: context,
+          builder: (context) => const ErrorDialog(
+            message: "There is no record existing",
+          ),
+        );
+      }
     });
   }
 
