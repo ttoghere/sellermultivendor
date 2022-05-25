@@ -12,6 +12,8 @@ import 'package:sellermultivendor/view/shared/error_dialog.dart';
 import 'package:sellermultivendor/view/shared/loading_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../global/global.dart';
+
 class SignUp extends StatefulWidget {
   const SignUp({Key? key}) : super(key: key);
 
@@ -107,7 +109,6 @@ class _SignUpState extends State<SignUp> {
 
   void authenticateSellerSignUp() async {
     User? currentUser;
-    final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
     await firebaseAuth
         .createUserWithEmailAndPassword(
       email: emailControl.text.trim(),
@@ -149,12 +150,11 @@ class _SignUpState extends State<SignUp> {
       "lng": position!.longitude,
     });
     //Save Data Locally
-    SharedPreferences? sharedPreferences =
-        await SharedPreferences.getInstance();
-    await sharedPreferences.setString("uid", currentUser.uid);
-    await sharedPreferences.setString("email", currentUser.email.toString());
-    await sharedPreferences.setString("name", nameControl.text.trim());
-    await sharedPreferences.setString("photoUrl", sellerImageUrl);
+    sharedPreferences = await SharedPreferences.getInstance();
+    await sharedPreferences!.setString("uid", currentUser.uid);
+    await sharedPreferences!.setString("email", currentUser.email.toString());
+    await sharedPreferences!.setString("name", nameControl.text.trim());
+    await sharedPreferences!.setString("photoUrl", sellerImageUrl);
   }
 
   Position? position;

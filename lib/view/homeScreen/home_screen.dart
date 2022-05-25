@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:sellermultivendor/global/global.dart';
+import 'package:sellermultivendor/view/auth/auth_screen.dart';
+import 'package:sellermultivendor/view/shared/app_gradient.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -10,6 +13,35 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: appGradient(),
+          ),
+        ),
+        title: Text(sharedPreferences!.getString("name")!),
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+      ),
+      body: Center(
+        child: ElevatedButton.icon(
+          onPressed: () {
+            firebaseAuth.signOut().then((value) {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => const AuthScreen(),
+                ),
+              );
+            });
+          },
+          style: ElevatedButton.styleFrom(
+            primary: Colors.red[900],
+          ),
+          icon: const Icon(Icons.logout),
+          label: const Text("Log Out"),
+        ),
+      ),
+    );
   }
 }
